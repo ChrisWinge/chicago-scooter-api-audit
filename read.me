@@ -1,0 +1,29 @@
+# Chicago E-Scooter Operational Audit: A Deep-Dive into API Data Analysis
+
+## Project Motivation: Mastering APIs
+The primary goal of this project was to move beyond static datasets and master the art of working with **live APIs**. While CSV files are a standard starting point for many, I recognized that professional data analysis often requires the ability to hook directly into live data streams to get the most current information.
+
+I discovered the [Chicago Data Portal](https://data.cityofchicago.org/Transportation/E-Scooter-Trips-2023-Present/2i5w-ykuw/about_data) and decided to use their e-scooter telemetry as my testing ground. I wanted to see if I could use API calls to uncover the "un-happy path" of a city-wide transit system—specifically identifying fleet maintenance issues, "ghost trips," and the relationship between urban density and transit efficiency.
+
+
+
+## Key Insights
+* **The API Learning Curve:** Instead of downloading a pre-packaged dataset, I connected directly to the City of Chicago’s live data portal. I learned how to manage authentication, write server-side queries to optimize memory, and handle high-volume data streams (aggregating over 1M+ rows for statistical accuracy).
+* **Identifying "Ghost Trips":** I defined a "Ghost Trip" as any ride lasting over 30 seconds but moving 0 meters. This query helped pinpoint potential mechanical or battery failures, uncovering nearly 180,000 instances of failed departures across the city.
+* **Operational Reliability (Normalized):** By calculating failure rates, I discovered that while Lime has the highest volume of "ghosts," their failure rate is remarkably low at **1.09%**. In contrast, **Lyft** showed a failure rate nearly double that (**2.17%**), highlighting a significant difference in maintenance efficiency at scale.
+* **Market Expansion:** By comparing yearly data via the API, I tracked a massive **204% jump** in Lime’s trip totals between 2023 and 2024, confirming their position as the dominant market leader in Chicago.
+
+## The Tech Stack
+* **APIs (SODA/Socrata):** I utilized server-side aggregation (SQL-style grouping within the API call) to pull summarized data. This approach is significantly more efficient than downloading and managing massive, raw JSON files locally.
+* **Pandas:** Used for complex data cleaning, aligning data types across multiple API requests, and performing feature engineering to derive MPH from raw meters and seconds.
+* **Seaborn & Matplotlib:** Focused on creating "glanceable" visualizations, including heatmap-style bar charts for neighborhood demand and formatted bar charts for vendor health metrics.
+
+## Engineering Challenges
+**The Normalization Trap:** A major hurdle was realizing that raw counts of "broken" scooters are misleading—the largest vendors will naturally have the highest number of failures. I overcame this by merging two distinct API pulls (Total Trips vs. Ghost Trips) to calculate a **Normalization Rate**. This allowed for a fair "apples-to-apples" comparison of vendor reliability regardless of their total fleet size.
+
+
+
+## How to Use
+1. Clone the repo.
+2. Open `chicago_e-scooter_trips.ipynb`.
+3. Ensure you have `pandas`, `seaborn`, and `requests` installed.
